@@ -13,7 +13,7 @@ async function run(): Promise<void> {
     const baseAndHead = getBaseAndHead(context)
     core.info(`${baseAndHead.base}, ${baseAndHead.head}`)
 
-    const myToken = core.getInput('myToken')
+    const myToken = core.getInput('token')
     const octokit = github.getOctokit(myToken)
     const {data: pullRequest} = await octokit.pulls.get({
       owner: 'nakamasato',
