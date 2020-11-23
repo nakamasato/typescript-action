@@ -105,6 +105,7 @@ function run() {
             }
             const baseAndHead = github_2.getBaseAndHead(github_1.context);
             core.info(`${baseAndHead.base}, ${baseAndHead.head}`);
+            core.info(`pull_request: ${github_1.context.payload.pull_request}`);
             const myToken = core.getInput('token');
             const octokit = utils_1.getOctokitOptions(myToken);
             const { data: pullRequest } = yield octokit.pulls.get({

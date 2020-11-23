@@ -12,6 +12,7 @@ async function run(): Promise<void> {
     }
     const baseAndHead = getBaseAndHead(context)
     core.info(`${baseAndHead.base}, ${baseAndHead.head}`)
+    core.info(`pull_request: ${context.payload.pull_request}`)
 
     const myToken = core.getInput('token')
     const octokit = getOctokitOptions(myToken)
