@@ -2,12 +2,10 @@ name: 'Your name here'
 description: 'Provide a description here'
 author: 'Your name or organization here'
 inputs:
-  token:
-    description: >
-      GitHub token for GitHub API requests.
-      Users shouldn't need to set this themselves.
+  milliseconds: # change this
     required: true
-    default: ${{ github.token }}
+    description: 'input description here'
+    default: '1000'
 runs:
   using: 'node12'
   main: 'dist/index.js'
