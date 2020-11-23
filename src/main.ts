@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import {context} from '@actions/github'
-const github = require('@actions/github')
+import {getOctokitOptions} from '@actions/github/lib/utils'
 import {getBaseAndHead} from './github'
 
 async function run(): Promise<void> {
@@ -14,7 +14,7 @@ async function run(): Promise<void> {
     core.info(`${baseAndHead.base}, ${baseAndHead.head}`)
 
     const myToken = core.getInput('token')
-    const octokit = github.getOctokit(myToken)
+    const octokit = getOctokitOptions(myToken)
     const {data: pullRequest} = await octokit.pulls.get({
       owner: 'nakamasato',
       repo: 'typescript-action',

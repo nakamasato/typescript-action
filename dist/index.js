@@ -92,7 +92,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__webpack_require__(186));
 const github_1 = __webpack_require__(438);
-const github = __webpack_require__(438);
+const utils_1 = __webpack_require__(30);
 const github_2 = __webpack_require__(928);
 function run() {
     var _a;
@@ -105,8 +105,8 @@ function run() {
             }
             const baseAndHead = github_2.getBaseAndHead(github_1.context);
             core.info(`${baseAndHead.base}, ${baseAndHead.head}`);
-            const myToken = core.getInput('myToken');
-            const octokit = github.getOctokit(myToken);
+            const myToken = core.getInput('token');
+            const octokit = utils_1.getOctokitOptions(myToken);
             const { data: pullRequest } = yield octokit.pulls.get({
                 owner: 'nakamasato',
                 repo: 'typescript-action',
