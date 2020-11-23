@@ -1,17 +1,48 @@
-import {wait} from '../src/wait'
-import * as process from 'process'
-import * as cp from 'child_process'
-import * as path from 'path'
+import {Context} from '@actions/github/lib/context'
+import {WebhookPayload} from '@actions/github/lib/interfaces'
+import {getBaseAndHead} from '../src/github'
 
-test('throws invalid number', async () => {
-  const input = parseInt('foo', 10)
-  await expect(wait(input)).rejects.toThrow('milliseconds not a number')
+describe('pull_request', () => {
+  let context: Context
+  let payload: WebhookPayload
+  beforeEach(() => {
+    context = new Context()
+    payload = {}
+    payload.pull_request = {
+      number: 1,
+      base: {
+        sha: 'base_sha'
+      },
+      head: {
+        sha: 'head_sha'
+      }
+    }
+    context.eventName = 'pull_request'
+    context.payload = payload
+  })
+
+  it('returns base_sha and head_sha', () => {
+    const baseAndHead = getBaseAndHead(context)
+    expect(baseAndHead.base).toEqual('base_sha')
+    expect(baseAndHead.head).toEqual('head_sha')
+  })
 })
 
-test('wait 500 ms', async () => {
-  const start = new Date()
-  await wait(500)
-  const end = new Date()
-  var delta = Math.abs(end.getTime() - start.getTime())
-  expect(delta).toBeGreaterThan(450)
+describe('push', () => {
+  let context: Context
+  let payload: WebhookPayload
+  beforeEach(() => {
+    context = new Context()
+    payload = {}
+    payload.before = 'before'
+    payload.after = 'after'
+    context.eventName = 'push'
+    context.payload = payload
+  })
+
+  it('returns before and after', () => {
+    const baseAndHead = getBaseAndHead(context)
+    expect(baseAndHead.base).toEqual('before')
+    expect(baseAndHead.head).toEqual('after')
+  })
 })
