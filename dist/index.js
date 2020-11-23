@@ -40,7 +40,6 @@ const core = __importStar(__webpack_require__(186));
 const github_1 = __webpack_require__(438);
 const wait_1 = __webpack_require__(817);
 function run() {
-    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const ms = '1000';
@@ -49,37 +48,35 @@ function run() {
             yield wait_1.wait(parseInt(ms, 10));
             core.debug(new Date().toTimeString());
             core.setOutput('time', new Date().toTimeString());
-            const eventName = github_1.context.eventName;
-            core.info(eventName);
-            let base;
-            let head;
-            switch (eventName) {
-                case 'pull_request':
-                    base = (_b = (_a = github_1.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base) === null || _b === void 0 ? void 0 : _b.sha;
-                    head = (_d = (_c = github_1.context.payload.pull_request) === null || _c === void 0 ? void 0 : _c.head) === null || _d === void 0 ? void 0 : _d.sha;
-                    break;
-                case 'push':
-                    base = github_1.context.payload.before;
-                    head = github_1.context.payload.after;
-                    break;
-                default:
-                    core.setFailed(`This action only supports pull requests and pushes, ${github_1.context.eventName} events are not supported. ` +
-                        "Please submit an issue on this action's GitHub repo if you believe this in correct.");
-            }
-            core.info(`base: ${base}, head: ${head}`);
-            // Ensure that the base and head properties are set on the payload.
-            if (!base || !head) {
-                core.setFailed(`The base and head commits are missing from the payload for this ${github_1.context.eventName} event. ` +
-                    "Please submit an issue on this action's GitHub repo.");
-                // To satisfy TypeScript, even though this is unreachable.
-                base = '';
-                head = '';
-            }
+            const baseAndHead = getBaseAndHead(github_1.context.eventName);
+            core.info(`${baseAndHead.base}, ${baseAndHead.head}`);
         }
         catch (error) {
             core.setFailed(error.message);
         }
     });
+}
+function getBaseAndHead(eventName) {
+    var _a, _b, _c, _d;
+    switch (eventName) {
+        case 'pull_request':
+            return {
+                base: (_b = (_a = github_1.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base) === null || _b === void 0 ? void 0 : _b.sha,
+                head: (_d = (_c = github_1.context.payload.pull_request) === null || _c === void 0 ? void 0 : _c.head) === null || _d === void 0 ? void 0 : _d.sha
+            };
+        case 'push':
+            return {
+                base: github_1.context.payload.before,
+                head: github_1.context.payload.after
+            };
+        default:
+            core.setFailed(`This action only supports pull requests and pushes, ${github_1.context.eventName} events are not supported. ` +
+                "Please submit an issue on this action's GitHub repo if you believe this in correct.");
+            return {
+                base: '',
+                head: ''
+            };
+    }
 }
 run();
 
