@@ -40,6 +40,7 @@ const core = __importStar(__webpack_require__(186));
 const github_1 = __webpack_require__(438);
 const wait_1 = __webpack_require__(817);
 function run() {
+    var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const ms = core.getInput('milliseconds');
@@ -50,6 +51,22 @@ function run() {
             core.setOutput('time', new Date().toTimeString());
             const eventName = github_1.context.eventName;
             console.log(eventName);
+            let base;
+            let head;
+            switch (eventName) {
+                case 'pull_request':
+                    base = (_b = (_a = github_1.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.base) === null || _b === void 0 ? void 0 : _b.sha;
+                    head = (_d = (_c = github_1.context.payload.pull_request) === null || _c === void 0 ? void 0 : _c.head) === null || _d === void 0 ? void 0 : _d.sha;
+                    break;
+                case 'push':
+                    base = github_1.context.payload.before;
+                    head = github_1.context.payload.after;
+                    break;
+                default:
+                    core.setFailed(`This action only supports pull requests and pushes, ${github_1.context.eventName} events are not supported. ` +
+                        "Please submit an issue on this action's GitHub repo if you believe this in correct.");
+            }
+            console.log(`base: ${base}, head: ${head}`);
         }
         catch (error) {
             core.setFailed(error.message);
