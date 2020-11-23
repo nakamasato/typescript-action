@@ -1,4 +1,5 @@
 import * as core from '@actions/core'
+import {context} from '@actions/github'
 import {wait} from './wait'
 
 async function run(): Promise<void> {
@@ -11,6 +12,9 @@ async function run(): Promise<void> {
     core.debug(new Date().toTimeString())
 
     core.setOutput('time', new Date().toTimeString())
+
+    const eventName = context.eventName
+    console.log(eventName)
   } catch (error) {
     core.setFailed(error.message)
   }
