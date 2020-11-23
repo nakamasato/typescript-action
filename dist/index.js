@@ -43,14 +43,14 @@ function run() {
     var _a, _b, _c, _d;
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const ms = core.getInput('milliseconds');
+            const ms = '1000';
             core.debug(`Waiting ${ms} milliseconds ...`); // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
             core.debug(new Date().toTimeString());
             yield wait_1.wait(parseInt(ms, 10));
             core.debug(new Date().toTimeString());
             core.setOutput('time', new Date().toTimeString());
             const eventName = github_1.context.eventName;
-            console.log(eventName);
+            core.info(eventName);
             let base;
             let head;
             switch (eventName) {
@@ -66,7 +66,15 @@ function run() {
                     core.setFailed(`This action only supports pull requests and pushes, ${github_1.context.eventName} events are not supported. ` +
                         "Please submit an issue on this action's GitHub repo if you believe this in correct.");
             }
-            console.log(`base: ${base}, head: ${head}`);
+            core.info(`base: ${base}, head: ${head}`);
+            // Ensure that the base and head properties are set on the payload.
+            if (!base || !head) {
+                core.setFailed(`The base and head commits are missing from the payload for this ${github_1.context.eventName} event. ` +
+                    "Please submit an issue on this action's GitHub repo.");
+                // To satisfy TypeScript, even though this is unreachable.
+                base = '';
+                head = '';
+            }
         }
         catch (error) {
             core.setFailed(error.message);

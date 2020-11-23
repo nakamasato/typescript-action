@@ -1,10 +1,10 @@
 import * as core from '@actions/core'
-import { context } from '@actions/github'
-import { wait } from './wait'
+import {context} from '@actions/github'
+import {wait} from './wait'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
+    const ms = '1000'
     core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_RUNNER_DEBUG` to true
 
     core.debug(new Date().toTimeString())
@@ -14,7 +14,7 @@ async function run(): Promise<void> {
     core.setOutput('time', new Date().toTimeString())
 
     const eventName = context.eventName
-    console.log(eventName)
+    core.info(eventName)
     let base: string | undefined
     let head: string | undefined
 
@@ -30,12 +30,22 @@ async function run(): Promise<void> {
       default:
         core.setFailed(
           `This action only supports pull requests and pushes, ${context.eventName} events are not supported. ` +
-          "Please submit an issue on this action's GitHub repo if you believe this in correct."
+            "Please submit an issue on this action's GitHub repo if you believe this in correct."
         )
     }
-    console.log(`base: ${base}, head: ${head}`);
+    core.info(`base: ${base}, head: ${head}`)
 
+    // Ensure that the base and head properties are set on the payload.
+    if (!base || !head) {
+      core.setFailed(
+        `The base and head commits are missing from the payload for this ${context.eventName} event. ` +
+          "Please submit an issue on this action's GitHub repo."
+      )
 
+      // To satisfy TypeScript, even though this is unreachable.
+      base = ''
+      head = ''
+    }
   } catch (error) {
     core.setFailed(error.message)
   }
